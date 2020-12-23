@@ -11,14 +11,15 @@ const Button = props => {
 		labelColor,
 		borderColor,
 		backgroundColor,
+		fontFamily,
 		onBtnClick,
 		className,
 		keywords,
+		style,
 	} = props;
 
 	const buttonCSS = {
-		fontWeight: 700,
-		fontFamily: GetFontFamily("title"),
+		...style,
 		transition: "background-color .1s ease-out,color .1s ease-out",
 		outline: "none",
 		height: "fit-content",
@@ -40,7 +41,10 @@ const Button = props => {
 	}
 
 	const mergeWithDefaultStyles = (stylesObj, keyword) => {
-		return NullifyEmptyObject(Object.assign(getKeywordStyles(keyword, false, "default") ?? {}, stylesObj));
+		if (Object.keys(stylesObj).length === 0 && stylesObj.constructor === Object) {
+			return null
+		}
+		return Object.assign(getKeywordStyles(keyword, false, "default") ?? {}, stylesObj);
 	}
 
 	const getKeywordStyles = (keyword, shouldMergeWithDefaultStyles = true, buttonState = null) => {
@@ -59,43 +63,43 @@ const Button = props => {
 					borderRadius: ".1875rem",
 				},
 				"label": {
-					color: GetThemeColor(modifier),
+					color: modifier,
 				},
 				"border": {
-					borderColor: GetThemeColor(modifier),
+					borderColor: modifier,
 				},
 				"background": {
-					backgroundColor: GetThemeColor(modifier),
+					backgroundColor: modifier,
 				},
 			},
 			"hover": {
 				"hollow": {
 					/** auto-background for hollow buttons. will only be used if hover-background is not present. **/
-					backgroundColor: GetThemeColor(getKeywordModifier("border")),
+					backgroundColor: getKeywordModifier("border"),
 				},
 				"hover-label": {
-					color: GetThemeColor(modifier),
+					color: modifier,
 				},
 				"hover-border": {
-					borderColor: GetThemeColor(modifier),
+					borderColor: modifier,
 				},
 				"hover-background": {
-					backgroundColor: GetThemeColor(modifier),
+					backgroundColor: modifier,
 				},
 			},
 			"active": {
 				"hollow": {
 					/** auto-background for hollow buttons. will only be used if active-background is not present. **/
-					backgroundColor: GetThemeColor(getKeywordModifier("border")),
+					backgroundColor: getKeywordModifier("border"),
 				},
 				"active-label": {
-					color: GetThemeColor(modifier),
+					color: modifier,
 				},
 				"active-border": {
-					borderColor: GetThemeColor(modifier),
+					borderColor: modifier,
 				},
 				"active-background": {
-					backgroundColor: GetThemeColor(modifier),
+					backgroundColor: modifier,
 				},
 			},
 		}
@@ -120,21 +124,19 @@ const Button = props => {
 	}
 	
 	return (
-		<div className={"cell grid-x " + className}>
-			<button 
-				onMouseEnter={() => setHoverState(true)}
-				onMouseLeave={() => setHoverState(false)}
-				onFocus={() => setHoverState(true)}
-				onBlur={() => setHoverState(false)}
-				onMouseDown={() => setActiveState(true)}
-				onMouseUp={() => setActiveState(false)}
-				style={Object.assign(buttonCSS, parseKeywords())}
-				onClick={onBtnClick}
-				className={"cell"}
-			>
-				{label}
-			</button>
-		</div>
+		<button 
+			onMouseEnter={() => setHoverState(true)}
+			onMouseLeave={() => setHoverState(false)}
+			onFocus={() => setHoverState(true)}
+			onBlur={() => setHoverState(false)}
+			onMouseDown={() => setActiveState(true)}
+			onMouseUp={() => setActiveState(false)}
+			style={Object.assign(buttonCSS, parseKeywords())}
+			onClick={onBtnClick}
+			className={className}
+		>
+			{label}
+		</button>
 	);
 }
 
@@ -147,17 +149,21 @@ Button.propTypes = {
 	backgroundColor: PropTypes.string,
 	keywords: PropTypes.string,
 	onBtnClick: PropTypes.func,
+	style: PropTypes.object,
+
 }
 
 Button.defaultProps = {
 	isHollow: false,
 	isSmall: false,
-	labelColor: GetThemeColor("white"),
-	borderColor: GetThemeColor("green"),
-	backgroundColor: GetThemeColor("green"),
+	labelColor: "white",
+	borderColor: "black",
+	backgroundColor: "gray",
 	keywords: "",
 	onBtnClick: () => {},
 	className: "",
+	fontFamily: "inherit",
+	style: {},
 }
 
 export default Button;
