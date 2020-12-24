@@ -11,7 +11,6 @@ const Button = props => {
 		labelColor,
 		borderColor,
 		backgroundColor,
-		fontFamily,
 		onBtnClick,
 		className,
 		keywords,
@@ -23,13 +22,20 @@ const Button = props => {
 		transition: "background-color .1s ease-out,color .1s ease-out",
 		outline: "none",
 		height: "fit-content",
-		fontSize: "1.25rem",
-		padding: "0.75rem 1.4375rem",
-		borderRadius: ".3125rem",
 		color: labelColor,
 		borderColor: borderColor,
 		backgroundColor: backgroundColor,
 	};
+
+	/**
+	 * Receives an object and returns null if empty. Used primarily in function calls where 
+	 * returning an empty object instead of null could cause confusion.
+	 * @param {object} obj
+	 * @returns If the object is empty, returns null. If not empty, returns the object.
+	 */
+	const nullifyEmptyObject = obj => {
+		return (Object.keys(obj).length === 0 && obj.constructor === Object) ? null : obj;
+	}
 
 	const keywordsArray = () => {
 		return keywords.split(" ");
@@ -41,10 +47,7 @@ const Button = props => {
 	}
 
 	const mergeWithDefaultStyles = (stylesObj, keyword) => {
-		if (Object.keys(stylesObj).length === 0 && stylesObj.constructor === Object) {
-			return null
-		}
-		return Object.assign(getKeywordStyles(keyword, false, "default") ?? {}, stylesObj);
+		return nullifyEmptyObject(Object.assign(getKeywordStyles(keyword, false, "default") ?? {}, stylesObj));
 	}
 
 	const getKeywordStyles = (keyword, shouldMergeWithDefaultStyles = true, buttonState = null) => {
@@ -162,7 +165,6 @@ Button.defaultProps = {
 	keywords: "",
 	onBtnClick: () => {},
 	className: "",
-	fontFamily: "inherit",
 	style: {},
 }
 
